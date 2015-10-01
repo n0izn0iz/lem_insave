@@ -1,0 +1,70 @@
+#include "lem_in.h"
+#include <stdio.h>
+
+#suite objects
+
+#tcase construct_room
+
+	#test construct_room_name
+		char* str = "jambon";
+		t_room* room = construct_room(str, 42, 24, 5);
+		fail_unless(strcmp(room->name, str) == 0, "the name was not assigned correctly");
+
+	#test construct_room_name_copy
+		char* str = "jambon";
+		t_room* room = construct_room(str, 42, 24, 5);
+		fail_unless(room->name != str, "the string was not copied");
+
+	#test construct_room_coord_x
+		t_room* room = construct_room("jambon", 42, 24, 5);
+		fail_unless(room->coord_x == 42, "coord_x was not assigned properly");
+
+	#test construct_room_coord_y
+		t_room* room = construct_room("jambon", 42, 24, 5);
+		fail_unless(room->coord_y == 24, "coord_y was not assigned properly");
+
+	#test construct_room_array
+		t_room* room = construct_room("jambon", 42, 24, 5);
+		fail_unless(room->tubes->size == 0, "the tube array was not correctly initialized");
+
+	#test construct_ant_count
+		t_room* room = construct_room("jambon", 42, 24, 5);
+		fail_unless(room->ant_count == 5, "ant_count was not correctly initialized");
+
+#tcase construct_tube
+
+	#test construct_tube_a
+		t_room* room_a = construct_room("a", 42, 24, 5);
+		t_room* room_b = construct_room("b", 42, 24, 5);
+		t_tube* tube = construct_tube(room_a, room_b);
+		fail_unless(strcmp(tube->a->name, "a") == 0, "room a was not assigned correctly");
+
+	#test construct_tube_b
+		t_room* room_a = construct_room("a", 42, 24, 5);
+		t_room* room_b = construct_room("b", 42, 24, 5);
+		t_tube* tube = construct_tube(room_a, room_b);
+		fail_unless(strcmp(tube->b->name, "b") == 0, "room b was not assigned correctly");
+
+#tcase link_rooms
+
+	#test link_rooms_a
+		t_room* room_a = construct_room("a", 42, 24, 5);
+		t_room* room_b = construct_room("b", 42, 24, 5);
+		t_tube* tube = link_rooms(room_a, room_b);
+		fail_unless(((t_tube*)array_get(room_a->tubes, 0))->b == room_b, "link is broken from a to b");
+
+	#test link_rooms_b
+		t_room* room_a = construct_room("a", 42, 24, 5);
+		t_room* room_b = construct_room("b", 42, 24, 5);
+		t_tube* tube = link_rooms(room_a, room_b);
+		fail_unless(((t_tube*)array_get(room_b->tubes, 0))->a == room_a, "link is broken from b to a");
+
+#tcase construct_map
+	
+	#test construct_map_room_array
+		t_map* map = construct_map();
+		fail_unless(map->rooms->size == 0, "the room array was not correctly initialized");
+
+	#test construct_map_tube_array
+		t_map* map = construct_map();
+		fail_unless(map->tubes->size == 0, "the tube array was not correctly initialized");

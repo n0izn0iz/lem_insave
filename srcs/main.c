@@ -6,6 +6,8 @@
 int main()
 {
 	t_map* map;
+	t_array* paths;
 
 	map = read_map();
+	paths = find_paths(map);
 }

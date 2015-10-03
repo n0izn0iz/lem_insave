@@ -16,7 +16,9 @@ t_map*	construct_map()
 
 	newMap = malloc(sizeof(t_map));
 	newMap->rooms = array_create(5);
-	newMap->tubes = array_create(5);
+	newMap->ant_count = 13;
+	newMap->start = NULL;
+	newMap->end = NULL;
 	return (newMap);
 }
 
@@ -95,8 +97,12 @@ bool handle_room(const char* line, uint command, t_map* map)
 	name = split[0];
 	coord_x = ft_atoi(split[1]);
 	coord_y = ft_atoi(split[2]);
-	t_room* room = construct_room(name, coord_x, coord_y, 0);
+	t_room* room = construct_room(name, coord_x, coord_y);
 	array_append(map->rooms, room);
+	if (command == START_COMMAND)
+		map->start = room;
+	else if (command == END_COMMAND)
+		map->end = room;
 	printroom(room);
 	return (true);
 }
@@ -119,31 +125,29 @@ static t_room*	get_room_by_name(const char* name, t_map* map)
 }
 
 // untested
-static t_tube* link_rooms_by_name(const char* a_name, const char* b_name, t_map* map)
+static void link_rooms_by_name(const char* a_name, const char* b_name, t_map* map)
 {
 	t_room* room_a;
 	t_room* room_b;
 
 	room_a = get_room_by_name(a_name, map);
 	room_b = get_room_by_name(b_name, map);
-	return (link_rooms(room_a, room_b));
+	link_rooms(room_a, room_b);
 }
 
 // untested, debug stuff, memleak
 bool handle_tube(const char* line, t_map* map)
 {
 	char	**split;
-	t_tube	*tube;
 
 	split = ft_strsplit(line, '-');
 	if (splitsize(split) != 2)
 		return (false);
-	tube = link_rooms_by_name(split[0], split[1], map);
-	array_append(map->tubes, tube);
+	link_rooms_by_name(split[0], split[1], map);
 	ft_putstr("Tube: ");
-	ft_putstr(tube->a->name);
+	ft_putstr(split[0]);
 	ft_putstr(" to ");
-	ft_putendl(tube->b->name);
+	ft_putendl(split[1]);
 	return (true);
 }
 
@@ -153,9 +157,7 @@ t_map*	read_map()
 	t_map* map;
 	char* buf;
 	uint command;
-	bool countset;
 
-	countset = false;
 	map = construct_map();
 	command = 0;
 	while (get_next_line(0, &buf) > 0)
@@ -171,15 +173,6 @@ t_map*	read_map()
 			continue;
 		if (handle_tube(buf, map))
 			continue;
-		if (!countset)
-		{
-			map->ant_count = ft_atoi(buf);
-			ft_putstr("Ants: ");
-			ft_putnbr(map->ant_count);
-			ft_putchar('\n');
-			countset = true;
-			continue;
-		}
 		ft_putstr("Unhandled line: ");
 		ft_putendl(buf);
 		error();

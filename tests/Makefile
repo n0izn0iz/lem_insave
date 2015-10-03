@@ -1,11 +1,19 @@
+CHECK_MK=./check/checkmk/checkmk
+CHECK_LIB=./check/src/.libs/libcheck.a
+
 all: clean tests
 	./tests
 
-tests: tests.c
-	gcc tests.c -Icheck/src -Icheck check/src/.libs/libcheck.a -I../includes -o tests -L.. -llem_in -L../libft -lft
+$(CHECK_MK): $(CHECK_LIB)
+	
+$(CHECK_LIB):
+	make -C check
 
-tests.c:
-	./check/checkmk/checkmk tests.check > tests.c
+tests: tests.c $(CHECK_LIB)
+	gcc tests.c -Icheck/src -Icheck -I../includes -o tests -L.. -llem_in -L../libft -lft $(CHECK_LIB)
+
+tests.c: $(CHECK_MK)
+	$(CHECK_MK) tests.check > tests.c
 
 clean:
 	rm -f tests.c

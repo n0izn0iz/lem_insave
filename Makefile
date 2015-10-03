@@ -28,6 +28,7 @@ clean:
 
 fclean: clean
 	rm -f $(NAME)
+	make -C tests/check clean
 	make -C tests clean
 	make -C libft fclean
 

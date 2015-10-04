@@ -88,32 +88,16 @@ t_array* find_paths(t_map* map)
 
 #include <stdio.h>
 
+static int comp_func(void* a, void* b)
+{
+	t_array* c = a;
+	t_array* d = b;
+	if (c->size < d->size)
+		return (true);
+	return (false);
+}
+
 void	sort_paths(t_array* paths)
 {
-	uint j;
-	uint i;
-	uint imin;
-	uint n;
-	t_array* path;
-	t_array* min_path;
-
-	n = paths->size;
-	j = 0;
-	while (j < n - 1)
-	{
-		imin = j;
-		path = array_get(paths, j);
-		i = j + 1;
-		while (i < n)
-		{
-			path = array_get(paths, i);
-			min_path = array_get(paths, imin);
-			if (path->size <= min_path->size)
-				imin = i;
-			i++;
-		}
-		if (imin != j)
-			array_swap(paths, imin, j);
-		j++;
-	}
+	array_sort(paths, comp_func);
 }

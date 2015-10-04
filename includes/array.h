@@ -29,5 +29,6 @@ void			array_set(t_array *array, unsigned int index, void *value);
 void			array_swap(t_array *array, unsigned int i1, unsigned int i2);
 void			*array_remove(t_array *array, unsigned int index);
 t_array*		array_dup(t_array* array);
+void			array_sort(t_array* array, int (*func)(void*, void*));
 
 #endif

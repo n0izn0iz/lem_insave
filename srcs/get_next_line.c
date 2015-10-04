@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define BUFF_SIZE 4096
+#define BUFF_SIZE 4095
 
 static int		check_buffer(char **buffer, char **line)
 {

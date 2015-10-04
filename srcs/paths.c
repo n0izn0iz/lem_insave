@@ -16,7 +16,7 @@ static bool find_room_in_path(t_room *room, t_array *path)
 	return (false);
 }
 
-static void print_path(t_array* path)
+void print_path(t_array* path)
 {
 	uint i;
 
@@ -29,6 +29,8 @@ static void print_path(t_array* path)
 		ft_putstr(room->name);
 		i++;
 	}
+	ft_putstr(" len=");
+	ft_putnbr(path->size);
 }
 
 void recur_paths(t_map* map, t_array* paths, t_room* curr_room, t_array* curr_path, int level)
@@ -82,4 +84,36 @@ t_array* find_paths(t_map* map)
 	curr_path = array_create(5);
 	recur_paths(map, paths, map->start, curr_path, 0);
 	return (paths);
+}
+
+#include <stdio.h>
+
+void	sort_paths(t_array* paths)
+{
+	uint j;
+	uint i;
+	uint imin;
+	uint n;
+	t_array* path;
+	t_array* min_path;
+
+	n = paths->size;
+	j = 0;
+	while (j < n - 1)
+	{
+		imin = j;
+		path = array_get(paths, j);
+		i = j + 1;
+		while (i < n)
+		{
+			path = array_get(paths, i);
+			min_path = array_get(paths, imin);
+			if (path->size <= min_path->size)
+				imin = i;
+			i++;
+		}
+		if (imin != j)
+			array_swap(paths, imin, j);
+		j++;
+	}
 }

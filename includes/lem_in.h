@@ -34,6 +34,8 @@ t_map*	construct_map();
 t_map*	read_map();
 
 t_array* find_paths(t_map* map);
+void	sort_paths(t_array* paths);
+void print_path(t_array* path);
 
 
 int		get_next_line(int const fd, char **line);

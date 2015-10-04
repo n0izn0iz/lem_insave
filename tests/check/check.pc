@@ -9,5 +9,5 @@ URL: http://check.sourceforge.net
 Version: 0.10.0
 Requires.private: 
 Libs: -L${libdir} -lcheck
-Libs.private:   -lm 
-Cflags: -I${includedir} -D_THREAD_SAFE 
+Libs.private:   -lrt -lm 
+Cflags: -I${includedir} -pthread

@@ -32,8 +32,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin14.5.0
-host_triplet = x86_64-apple-darwin14.5.0
+build_triplet = x86_64-unknown-linux-gnu
+host_triplet = x86_64-unknown-linux-gnu
 subdir = doc
 DIST_COMMON = $(check_TEXINFOS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/stamp-vti \
@@ -104,16 +104,16 @@ am__uninstall_files_from_dir = { \
   }
 DATA = $(example_DATA) $(examplesrc_DATA) $(exampletests_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/build-aux/missing --run aclocal-1.11
+ACLOCAL = ${SHELL} /home/n0iz/lem_in/tests/check/build-aux/missing --run aclocal-1.11
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
 AR = ar
-AUTOCONF = ${SHELL} /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/build-aux/missing --run autoconf
-AUTOHEADER = ${SHELL} /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/build-aux/missing --run autoheader
-AUTOMAKE = ${SHELL} /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/build-aux/missing --run automake-1.11
-AWK = awk
+AUTOCONF = ${SHELL} /home/n0iz/lem_in/tests/check/build-aux/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/n0iz/lem_in/tests/check/build-aux/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/n0iz/lem_in/tests/check/build-aux/missing --run automake-1.11
+AWK = gawk
 AWK_GSUB_DBL_BSLASH = \\\\
-AWK_PATH = /usr/bin/awk
+AWK_PATH = /usr/bin/gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2 -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wwrite-strings -Wno-variadic-macros -Wimport -Wfatal-errors -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default -Wunknown-pragmas
@@ -127,10 +127,10 @@ CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
 DLLTOOL = false
-DSYMUTIL = dsymutil
+DSYMUTIL = 
 DUMPBIN = 
-ECHO_C = \c
-ECHO_N = 
+ECHO_C = 
+ECHO_N = -n
 ECHO_T = 
 EGREP = /usr/bin/grep -E
 ENABLE_SUBUNIT = 0
@@ -148,26 +148,26 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LCOV = false
-LD = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
+LD = /usr/bin/ld -m elf_x86_64
 LDFLAGS = 
-LIBOBJS =  ${LIBOBJDIR}timer_create$U.o ${LIBOBJDIR}timer_settime$U.o ${LIBOBJDIR}timer_delete$U.o ${LIBOBJDIR}clock_gettime$U.o
-LIBS = -lm 
+LIBOBJS = 
+LIBS = -lrt -lm 
 LIBSUBUNIT_CFLAGS = 
 LIBSUBUNIT_LIBS = 
 LIBSUBUNIT_PC = 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
-LIPO = lipo
+LIPO = 
 LN_S = ln -s
-LTLIBOBJS =  ${LIBOBJDIR}timer_create$U.lo ${LIBOBJDIR}timer_settime$U.lo ${LIBOBJDIR}timer_delete$U.lo ${LIBOBJDIR}clock_gettime$U.lo
-MAKEINFO = ${SHELL} /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/build-aux/missing --run makeinfo
+LTLIBOBJS = 
+MAKEINFO = ${SHELL} /home/n0iz/lem_in/tests/check/build-aux/missing --run makeinfo
 MANIFEST_TOOL = :
-MKDIR_P = ../build-aux/install-sh -c -d
-NM = /usr/bin/nm
-NMEDIT = nmedit
-OBJDUMP = false
+MKDIR_P = /usr/bin/mkdir -p
+NM = /usr/bin/nm -B
+NMEDIT = 
+OBJDUMP = objdump
 OBJEXT = o
-OTOOL = otool
-OTOOL64 = :
+OTOOL = 
+OTOOL64 = 
 PACKAGE = check
 PACKAGE_BUGREPORT = check-devel at lists dot sourceforge dot net
 PACKAGE_NAME = Check
@@ -176,11 +176,11 @@ PACKAGE_TARNAME = check
 PACKAGE_URL = 
 PACKAGE_VERSION = 0.10.0
 PATH_SEPARATOR = :
-PKG_CONFIG = 
+PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
 PKG_CONFIG_PATH = 
 PTHREAD_CC = gcc
-PTHREAD_CFLAGS = -D_THREAD_SAFE 
+PTHREAD_CFLAGS = -pthread
 PTHREAD_LIBS = 
 RANLIB = ranlib
 SED = /usr/bin/sed
@@ -189,10 +189,10 @@ SHELL = /bin/sh
 STRIP = strip
 TEX = false
 VERSION = 0.10.0
-abs_builddir = /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc
-abs_srcdir = /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc
-abs_top_builddir = /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0
-abs_top_srcdir = /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0
+abs_builddir = /home/n0iz/lem_in/tests/check/doc
+abs_srcdir = /home/n0iz/lem_in/tests/check/doc
+abs_top_builddir = /home/n0iz/lem_in/tests/check
+abs_top_srcdir = /home/n0iz/lem_in/tests/check
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
@@ -203,32 +203,32 @@ am__quote =
 am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin14.5.0
+build = x86_64-unknown-linux-gnu
 build_alias = 
 build_cpu = x86_64
-build_os = darwin14.5.0
-build_vendor = apple
+build_os = linux-gnu
+build_vendor = unknown
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
 docdir = $(datadir)/doc/$(PACKAGE)
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-apple-darwin14.5.0
+host = x86_64-unknown-linux-gnu
 host_alias = 
 host_cpu = x86_64
-host_os = darwin14.5.0
-host_vendor = apple
+host_os = linux-gnu
+host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/build-aux/install-sh
+install_sh = ${SHELL} /home/n0iz/lem_in/tests/check/build-aux/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
 mandir = ${datarootdir}/man
-mkdir_p = $(top_builddir)/build-aux/install-sh -c -d
+mkdir_p = /usr/bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
 prefix = /usr/local
@@ -827,47 +827,47 @@ $(srcdir)/check.texi: money.1-2.h.diff \
 # think that means there is an error
 money.1-2.h.diff: $(eg_src)/money.1.h $(eg_src)/money.2.h
 	cd $(eg_root); \
-	diff -U 100 src/money.1.h src/money.2.h > /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc/$@ || test $$? -eq 1; \
+	diff -U 100 src/money.1.h src/money.2.h > /home/n0iz/lem_in/tests/check/doc/$@ || test $$? -eq 1; \
 	cd -;
 
 money.1-3.c.diff: $(eg_src)/money.1.c $(eg_src)/money.3.c
 	cd $(eg_root); \
-	diff -U 100 src/money.1.c src/money.3.c > /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc/$@ || test $$? -eq 1; \
+	diff -U 100 src/money.1.c src/money.3.c > /home/n0iz/lem_in/tests/check/doc/$@ || test $$? -eq 1; \
 	cd -;
 
 money.3-4.c.diff: $(eg_src)/money.3.c $(eg_src)/money.4.c
 	cd $(eg_root); \
-	diff -U 100 src/money.3.c src/money.4.c > /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc/$@ || test $$? -eq 1; \
+	diff -U 100 src/money.3.c src/money.4.c > /home/n0iz/lem_in/tests/check/doc/$@ || test $$? -eq 1; \
 	cd -;
 
 money.4-5.c.diff: $(eg_src)/money.4.c $(eg_src)/money.5.c
 	cd $(eg_root); \
-	diff -U 100 src/money.4.c src/money.5.c > /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc/$@ || test $$? -eq 1; \
+	diff -U 100 src/money.4.c src/money.5.c > /home/n0iz/lem_in/tests/check/doc/$@ || test $$? -eq 1; \
 	cd -;
 
 money.5-6.c.diff: $(eg_src)/money.5.c $(eg_src)/money.6.c
 	cd $(eg_root); \
-	diff -U 100 src/money.5.c src/money.6.c > /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc/$@ || test $$? -eq 1; \
+	diff -U 100 src/money.5.c src/money.6.c > /home/n0iz/lem_in/tests/check/doc/$@ || test $$? -eq 1; \
 	cd -;
 
 check_money.1-2.c.diff: $(eg_tests)/check_money.1.c $(eg_tests)/check_money.2.c
 	cd $(eg_root); \
-	diff -U 100 tests/check_money.1.c tests/check_money.2.c > /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc/$@ || test $$? -eq 1; \
+	diff -U 100 tests/check_money.1.c tests/check_money.2.c > /home/n0iz/lem_in/tests/check/doc/$@ || test $$? -eq 1; \
 	cd -;
 
 check_money.2-3.c.diff: $(eg_tests)/check_money.2.c $(eg_tests)/check_money.3.c
 	cd $(eg_root); \
-	diff -U 100 tests/check_money.2.c tests/check_money.3.c > /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc/$@ || test $$? -eq 1; \
+	diff -U 100 tests/check_money.2.c tests/check_money.3.c > /home/n0iz/lem_in/tests/check/doc/$@ || test $$? -eq 1; \
 	cd -;
 
 check_money.3-6.c.diff: $(eg_tests)/check_money.3.c $(eg_tests)/check_money.6.c
 	cd $(eg_root); \
-	diff -U 100 tests/check_money.3.c tests/check_money.6.c > /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc/$@ || test $$? -eq 1; \
+	diff -U 100 tests/check_money.3.c tests/check_money.6.c > /home/n0iz/lem_in/tests/check/doc/$@ || test $$? -eq 1; \
 	cd -;
 
 check_money.6-7.c.diff: $(eg_tests)/check_money.6.c $(eg_tests)/check_money.7.c
 	cd $(eg_root); \
-	diff -U 100 tests/check_money.6.c tests/check_money.7.c > /nfs/zfs-student-3/users/2014_paris/nmeier/checkcheck/check-0.10.0/doc/$@ || test $$? -eq 1; \
+	diff -U 100 tests/check_money.6.c tests/check_money.7.c > /home/n0iz/lem_in/tests/check/doc/$@ || test $$? -eq 1; \
 	cd -;
 
 clean-local:

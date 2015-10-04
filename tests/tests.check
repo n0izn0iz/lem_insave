@@ -29,7 +29,7 @@
 
 	#test construct_ant_count
 		t_room* room = construct_room("jambon", 42, 24);
-		fail_unless(room->has_ant == false, "has_ant was not correctly initialized");
+		fail_unless(room->ant_id == 0, "ant_id was not correctly initialized");
 
 #tcase link_rooms
 

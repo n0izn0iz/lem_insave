@@ -2,7 +2,7 @@
 #include <libft.h>
 #include <stdlib.h>
 
-static bool find_room_in_path(t_room *room, t_array *path)
+bool find_room_in_path(t_room *room, t_array *path)
 {
 	uint i;
 
@@ -50,17 +50,17 @@ void recur_paths(t_map* map, t_array* paths, t_room* curr_room, t_array* curr_pa
 
 	array_append(curr_path, curr_room);
 
-	ft_putstr("Level: ");
+	/*ft_putstr("Level: ");
 	ft_putnbr(level);
 	ft_putstr(", CurrPath: ");
 	print_path(curr_path);
-	ft_putchar('\n');
+	ft_putchar('\n');*/
 
 	if (curr_room == map->end)
 	{
-		ft_putstr("Found path: ");
+		/*ft_putstr("Found path: ");
 		print_path(curr_path);
-		ft_putchar('\n');
+		ft_putchar('\n');*/
 		array_append(paths, curr_path);
 		return ;
 	}
@@ -80,6 +80,7 @@ t_array* find_paths(t_map* map)
 	t_array* paths;
 	t_array* curr_path;
 
+	//ft_putendl("PATHFINDING:");
 	paths = array_create(5);
 	curr_path = array_create(5);
 	recur_paths(map, paths, map->start, curr_path, 0);

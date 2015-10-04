@@ -16,7 +16,7 @@ t_map*	construct_map()
 
 	newMap = malloc(sizeof(t_map));
 	newMap->rooms = array_create(5);
-	newMap->ant_count = 13;
+	newMap->ant_count = 3;
 	newMap->start = NULL;
 	newMap->end = NULL;
 	return (newMap);
@@ -27,8 +27,8 @@ bool handle_comment(const char* line)
 {
 	if (line[0] == '#' && line[1] !=  '#')
 	{
-		ft_putstr("Comment: ");
-		ft_putendl(line + 1);
+		/*ft_putstr("Comment: ");
+		ft_putendl(line + 1);*/
 		return (true);
 	}
 	return (false);
@@ -41,12 +41,12 @@ uint handle_command(const char* line)
 		return (false);
 	if (ft_strcmp("start", line + 2) == 0)
 	{
-		ft_putendl("Command: start");
+		ft_putendl("##start");
 		return (START_COMMAND);
 	}
 	if (ft_strcmp("end", line + 2) == 0)
 	{
-		ft_putendl("Command: end");
+		ft_putendl("##end");
 		return (END_COMMAND);
 	}
 	error();
@@ -70,11 +70,11 @@ static uint splitsize(char** split)
 // debug
 static void printroom(t_room* room)
 {
-	ft_putstr("Room: \"");
+	//ft_putstr("Room: \"");
 	ft_putstr(room->name);
-	ft_putstr("\" at ");
+	ft_putstr(" ");
 	ft_putnbr(room->coord_x);
-	ft_putstr(", ");
+	ft_putstr(" ");
 	ft_putnbr(room->coord_y);
 	ft_putendl("");
 }
@@ -108,7 +108,7 @@ bool handle_room(const char* line, uint command, t_map* map)
 }
 
 // untested
-static t_room*	get_room_by_name(const char* name, t_map* map)
+t_room*	get_room_by_name(const char* name, t_map* map)
 {
 	uint i;
 
@@ -117,6 +117,22 @@ static t_room*	get_room_by_name(const char* name, t_map* map)
 	{
 		t_room* room = array_get(map->rooms, i);
 		if (ft_strcmp(room->name, name) == 0)
+			return (room);
+		i++;
+	}
+	error();
+	return ((t_room*)UNDEFINED);
+}
+
+t_room*	get_room_by_ant_id(uint id, t_map* map)
+{
+	uint i;
+
+	i = 0;
+	while (i < map->rooms->size)
+	{
+		t_room* room = array_get(map->rooms, i);
+		if (room->ant_id == id)
 			return (room);
 		i++;
 	}
@@ -144,9 +160,9 @@ bool handle_tube(const char* line, t_map* map)
 	if (splitsize(split) != 2)
 		return (false);
 	link_rooms_by_name(split[0], split[1], map);
-	ft_putstr("Tube: ");
+	//ft_putstr("Tube: ");
 	ft_putstr(split[0]);
-	ft_putstr(" to ");
+	ft_putstr("-");
 	ft_putendl(split[1]);
 	return (true);
 }
@@ -159,6 +175,8 @@ t_map*	read_map()
 	uint command;
 
 	map = construct_map();
+	ft_putnbr(map->ant_count);
+	ft_putchar('\n');
 	command = 0;
 	while (get_next_line(0, &buf) > 0)
 	{

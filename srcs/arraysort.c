@@ -8,6 +8,8 @@ void			array_sort(t_array* array, int (*func)(void*, void*))
 	unsigned int n;
 
 	n = array->size;
+	if (n < 2)
+		return;
 	j = 0;
 	while (j < n - 1)
 	{

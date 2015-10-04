@@ -11,7 +11,7 @@ t_room* construct_room(const char *name, uint coord_x, uint coord_y)
 	newRoom->coord_x = coord_x;
 	newRoom->coord_y = coord_y;
 	newRoom->tubes = array_create(5);
-	newRoom->has_ant = false;
+	newRoom->ant_id = 0;
 	return (newRoom);
 }
 

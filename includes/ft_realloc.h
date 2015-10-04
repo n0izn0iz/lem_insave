@@ -13,8 +13,16 @@
 #ifndef FT_REALLOC_H
 # define FT_REALLOC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 # include <stdlib.h>
 
 void		*ft_realloc(void *ptr, size_t basesize, size_t newsize);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

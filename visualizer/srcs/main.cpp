@@ -1,9 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <lem_in.h>
+#include <libft.h>
 #include <iostream>
 #include <vector>
 
 #define ROOM_SIZE 80
+#define ANT_SIZE 16
 #define FRAME_COUNT 100
 #define window_pos(x) (50 + ((x) * 50))
 
@@ -107,23 +109,28 @@ static void apply_move_list(std::vector<Move>& move_list, t_map *map, uint& last
 	for (uint i = 0; i < move_list.size(); i++)
 	{
 		Move& move = move_list[i];
+		//std::cout << "Applying move: ant#" << move.ant_id << " to room \"" << move.room_name << "\"" << std::endl;
 		t_room *room_a;
 		if (move.ant_id > last_ant_id)
 		{
 			room_a = map->start;
 			last_ant_id++;
+			//std::cout << "Spawning ant#" << ++last_ant_id << std::endl;
 		}
 		else
+		{
+			//std::cout << "Trying to find room of ant#" << move.ant_id << std::endl;
 			room_a = get_room_by_ant_id(move.ant_id, map);
+		}
 		t_room *room_b = get_room_by_name(move.room_name.c_str(), map);
 		if (room_b != map->end)
-			room_b->ant_id = room_a->ant_id;
+			room_b->ant_id = move.ant_id;
 		if (room_a != map->start)
 			room_a->ant_id = NO_ANT;
 	}
 }
 
-static void draw_move(Move& move, uint frame_index, t_map *map, sf::RenderWindow& window, uint last_ant_id)
+static void draw_move(Move& move, uint frame_index, t_map *map, sf::RenderWindow& window, uint last_ant_id, sf::Font& font)
 {
 	t_room *room_a;
 	if (move.ant_id > last_ant_id)
@@ -132,22 +139,29 @@ static void draw_move(Move& move, uint frame_index, t_map *map, sf::RenderWindow
 		room_a = get_room_by_ant_id(move.ant_id, map);
 	t_room *room_b = get_room_by_name(move.room_name.c_str(), map);
 	const uint room_half = ROOM_SIZE / 2;
-	sf::Vector2f original_pos(window_pos(room_a->coord_x) + room_half - 30, window_pos(room_a->coord_y) + room_half - 30);
-	sf::Vector2f dest_pos(window_pos(room_b->coord_x) + room_half - 30, window_pos(room_b->coord_y) + room_half - 30);
+	sf::Vector2f original_pos(window_pos(room_a->coord_x) + room_half - ANT_SIZE, window_pos(room_a->coord_y) + room_half - ANT_SIZE);
+	sf::Vector2f dest_pos(window_pos(room_b->coord_x) + room_half - ANT_SIZE, window_pos(room_b->coord_y) + room_half - ANT_SIZE);
 	sf::Vector2f delta_vec = dest_pos - original_pos;
 	delta_vec.x *= ((double)frame_index / FRAME_COUNT);
 	delta_vec.y *= ((double)frame_index / FRAME_COUNT);
 	sf::Vector2f draw_pos = original_pos + delta_vec;
-	sf::CircleShape shape(30);
+	sf::CircleShape shape(ANT_SIZE);
 	shape.setPosition(draw_pos);
 	shape.setFillColor(sf::Color::Red);
 	window.draw(shape);
+	sf::Text text;
+	text.setFont(font);
+	text.setString(ft_itoa(move.ant_id));
+	text.setCharacterSize(16);
+	text.setColor(sf::Color::Black);
+	text.setPosition(draw_pos.x + 5, draw_pos.y + 5);
+	window.draw(text);
 }
 
-static void draw_move_list(std::vector<Move>& move_list, uint frame_index, t_map *map, sf::RenderWindow& window, uint last_ant_id)
+static void draw_move_list(std::vector<Move>& move_list, uint frame_index, t_map *map, sf::RenderWindow& window, uint last_ant_id, sf::Font& font)
 {
 	for (uint i = 0; i < move_list.size(); i++)
-		draw_move(move_list[i], frame_index, map, window, last_ant_id);
+		draw_move(move_list[i], frame_index, map, window, last_ant_id, font);
 }
 
 static void reset_map(t_map *map)
@@ -186,7 +200,7 @@ int main(void)
         draw_tubes(map, window);
         for (uint i = 0; i < map->rooms->size; i++)
         	draw_room((t_room*)array_get(map->rooms, i), window, font, map);
-        draw_move_list(moves[move_index], frame_index, map, window, last_ant_id);
+        draw_move_list(moves[move_index], frame_index, map, window, last_ant_id, font);
         if (frame_index < FRAME_COUNT)
         	frame_index++;
         else

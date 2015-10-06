@@ -4,29 +4,65 @@
 #include <iostream>
 #include <vector>
 
-#define ROOM_SIZE 80
-#define ANT_SIZE 16
 #define FRAME_COUNT 100
-#define window_pos(x) (50 + ((x) * 50))
+#define WIN_SZ 700
+#define BORDER (WIN_SZ / 16)
+#define SCALE (WIN_SZ / 16)
+#define ROOM_SIZE (WIN_SZ / 8)
+#define ANT_SIZE (WIN_SZ / 50)
+#define window_pos(x) (BORDER + ((x) * SCALE))
 
-void static draw_tube(t_room *rooma, t_room *roomb, sf::RenderWindow& window)
+struct Move
+{
+	//Move(uint id, const std::string& name) : ant_id(id), room_name(name) {}
+	Move(char **split) : ant_id(ft_atoi(split[0] + 1)), room_name(split[1]) {}
+	uint ant_id;
+	std::string room_name;
+};
+
+struct Scaler
+{
+	Scaler(t_map *map)
+	{
+		t_room *room;
+		uint max = 0;
+		for (uint i = 0; i < map->rooms->size; i++)
+		{
+			room = (t_room*)array_get(map->rooms, i);
+			if (room->coord_x > max)
+				max = room->coord_x;
+			if (room->coord_y > max)
+				max = room->coord_y;
+		}
+		dscale = WIN_SZ / max / 1.5;
+		border = dscale;
+	}
+	double scale(double x) const
+	{
+		return (border + (x * dscale));
+	}
+	double border;
+	double dscale;
+};
+
+void static draw_tube(t_room *rooma, t_room *roomb, sf::RenderWindow& window, Scaler& scaler)
 {
 	const uint room_half = ROOM_SIZE / 2;
 	sf::Vertex line[] =
 	{
-	    sf::Vertex(sf::Vector2f(window_pos(rooma->coord_x) + room_half, window_pos(rooma->coord_y) + room_half)),
-	    sf::Vertex(sf::Vector2f(window_pos(roomb->coord_x) + room_half, window_pos(roomb->coord_y) + room_half))
+	    sf::Vertex(sf::Vector2f(scaler.scale(rooma->coord_x) + room_half, scaler.scale(rooma->coord_y) + room_half)),
+	    sf::Vertex(sf::Vector2f(scaler.scale(roomb->coord_x) + room_half, scaler.scale(roomb->coord_y) + room_half))
 	};
 	window.draw(line, 2, sf::Lines);
 }
 
-void static draw_room(t_room *room, sf::RenderWindow& window, sf::Font& font, t_map *map, uint arrived_count, uint last_ant_id)
+void static draw_room(t_room *room, sf::RenderWindow& window, sf::Font& font, t_map *map, uint arrived_count, uint last_ant_id, Scaler& scaler)
 {
 	const uint room_half = ROOM_SIZE / 2;
 	(void)font;
 	uint xpos, ypos;
-	xpos = window_pos(room->coord_x);
-	ypos = window_pos(room->coord_y);
+	xpos = scaler.scale(room->coord_x);
+	ypos = scaler.scale(room->coord_y);
 	sf::RectangleShape rectangle(sf::Vector2f(ROOM_SIZE, ROOM_SIZE));
 	rectangle.setPosition(xpos, ypos);
 	window.draw(rectangle);
@@ -36,9 +72,9 @@ void static draw_room(t_room *room, sf::RenderWindow& window, sf::Font& font, t_
 	text.setString(room->name);
 	text.setCharacterSize(24);
 	text.setColor(sf::Color::Black);
-	text.setPosition(window_pos(room->coord_x) + 5, window_pos(room->coord_y) + room_half);
+	text.setPosition(scaler.scale(room->coord_x) + 5, scaler.scale(room->coord_y) + room_half);
 	window.draw(text);
-	text.setPosition(window_pos(room->coord_x) + 5, window_pos(room->coord_y));
+	text.setPosition(scaler.scale(room->coord_x) + 5, scaler.scale(room->coord_y));
 	text.setCharacterSize(12);
 	if (room == map->start)
 		text.setString("start " + std::string(ft_itoa(map->ant_count - last_ant_id)));
@@ -49,14 +85,14 @@ void static draw_room(t_room *room, sf::RenderWindow& window, sf::Font& font, t_
 	window.draw(text);
 }
 
-static void draw_tubes(t_map *map, sf::RenderWindow& window)
+static void draw_tubes(t_map *map, sf::RenderWindow& window, Scaler& scaler)
 {
 	for (uint j = 0; j < map->rooms->size; j++)
 	{
 		t_room *room = (t_room*)array_get(map->rooms, j);
 		for (uint i = 0; i < room->tubes->size; i++)
 		{
-			draw_tube(room, (t_room*)array_get(room->tubes, i), window);
+			draw_tube(room, (t_room*)array_get(room->tubes, i), window, scaler);
 			i++;
 		}
 	}
@@ -72,14 +108,6 @@ static t_map *create_map()
 	map = read_map(true);
 	return (map);
 }
-
-struct Move
-{
-	//Move(uint id, const std::string& name) : ant_id(id), room_name(name) {}
-	Move(char **split) : ant_id(ft_atoi(split[0] + 1)), room_name(split[1]) {}
-	uint ant_id;
-	std::string room_name;
-};
 
 static void create_moves(std::vector<std::vector<Move> >& moves)
 {
@@ -161,7 +189,7 @@ static uint apply_move_list(std::vector<Move>& move_list, t_map *map, uint& last
 	return (arrived_offset);
 }
 
-static void draw_move(Move& move, uint frame_index, t_map *map, sf::RenderWindow& window, uint last_ant_id, sf::Font& font)
+static void draw_move(Move& move, uint frame_index, t_map *map, sf::RenderWindow& window, uint last_ant_id, sf::Font& font, Scaler& scaler)
 {
 	t_room *room_a;
 	if (move.ant_id > last_ant_id)
@@ -170,8 +198,8 @@ static void draw_move(Move& move, uint frame_index, t_map *map, sf::RenderWindow
 		room_a = get_room_by_ant_id(move.ant_id, map);
 	t_room *room_b = get_room_by_name(move.room_name.c_str(), map);
 	const uint room_half = ROOM_SIZE / 2;
-	sf::Vector2f original_pos(window_pos(room_a->coord_x) + room_half - ANT_SIZE, window_pos(room_a->coord_y) + room_half - ANT_SIZE);
-	sf::Vector2f dest_pos(window_pos(room_b->coord_x) + room_half - ANT_SIZE, window_pos(room_b->coord_y) + room_half - ANT_SIZE);
+	sf::Vector2f original_pos(scaler.scale(room_a->coord_x) + room_half - ANT_SIZE, scaler.scale(room_a->coord_y) + room_half - ANT_SIZE);
+	sf::Vector2f dest_pos(scaler.scale(room_b->coord_x) + room_half - ANT_SIZE, scaler.scale(room_b->coord_y) + room_half - ANT_SIZE);
 	sf::Vector2f delta_vec = dest_pos - original_pos;
 	delta_vec.x *= ((double)frame_index / FRAME_COUNT);
 	delta_vec.y *= ((double)frame_index / FRAME_COUNT);
@@ -189,10 +217,10 @@ static void draw_move(Move& move, uint frame_index, t_map *map, sf::RenderWindow
 	window.draw(text);
 }
 
-static void draw_move_list(std::vector<Move>& move_list, uint frame_index, t_map *map, sf::RenderWindow& window, uint last_ant_id, sf::Font& font)
+static void draw_move_list(std::vector<Move>& move_list, uint frame_index, t_map *map, sf::RenderWindow& window, uint last_ant_id, sf::Font& font, Scaler& scaler)
 {
 	for (uint i = 0; i < move_list.size(); i++)
-		draw_move(move_list[i], frame_index, map, window, last_ant_id, font);
+		draw_move(move_list[i], frame_index, map, window, last_ant_id, font, scaler);
 }
 
 static void reset_map(t_map *map)
@@ -211,9 +239,10 @@ int main(void)
 	uint last_ant_id = 0;
 	uint arrived_count = 0;
 	t_map *map = create_map();
+	Scaler scaler(map);
 	std::vector<std::vector<Move> > moves;
 	create_moves(moves);
-	sf::RenderWindow window(sf::VideoMode(800, 600), "lem_in Visualizer");
+	sf::RenderWindow window(sf::VideoMode(WIN_SZ, WIN_SZ), "lem_in Visualizer");
 	sf::Font font;
 
 	if (!font.loadFromFile("font.otf"))
@@ -229,10 +258,10 @@ int main(void)
         }
 
         window.clear(sf::Color::Black);
-        draw_tubes(map, window);
+        draw_tubes(map, window, scaler);
         for (uint i = 0; i < map->rooms->size; i++)
-        	draw_room((t_room*)array_get(map->rooms, i), window, font, map, arrived_count, last_ant_id);
-        draw_move_list(moves[move_index], frame_index, map, window, last_ant_id, font);
+        	draw_room((t_room*)array_get(map->rooms, i), window, font, map, arrived_count, last_ant_id, scaler);
+        draw_move_list(moves[move_index], frame_index, map, window, last_ant_id, font, scaler);
         if (frame_index < FRAME_COUNT)
         	frame_index++;
         else
@@ -243,9 +272,9 @@ int main(void)
         	if (move_index >= moves.size())
         	{
         		window.clear(sf::Color::Black);
-		        draw_tubes(map, window);
+        		draw_tubes(map, window, scaler);
 		        for (uint i = 0; i < map->rooms->size; i++)
-		        	draw_room((t_room*)array_get(map->rooms, i), window, font, map, arrived_count, last_ant_id);
+		        	draw_room((t_room*)array_get(map->rooms, i), window, font, map, arrived_count, last_ant_id, scaler);
 		        window.display();
         		sf::sleep(sf::milliseconds(2000));
         		//
@@ -255,9 +284,9 @@ int main(void)
         		move_index = 0;
         		//
         		window.clear(sf::Color::Black);
-		        draw_tubes(map, window);
+        		draw_tubes(map, window, scaler);
 		        for (uint i = 0; i < map->rooms->size; i++)
-		        	draw_room((t_room*)array_get(map->rooms, i), window, font, map, arrived_count, last_ant_id);
+		        	draw_room((t_room*)array_get(map->rooms, i), window, font, map, arrived_count, last_ant_id, scaler);
 		        window.display();
         		sf::sleep(sf::milliseconds(2000));
         	}

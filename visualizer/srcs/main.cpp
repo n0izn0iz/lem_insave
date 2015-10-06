@@ -20,7 +20,7 @@ void static draw_tube(t_room *rooma, t_room *roomb, sf::RenderWindow& window)
 	window.draw(line, 2, sf::Lines);
 }
 
-void static draw_room(t_room *room, sf::RenderWindow& window, sf::Font& font, t_map *map)
+void static draw_room(t_room *room, sf::RenderWindow& window, sf::Font& font, t_map *map, uint arrived_count, uint last_ant_id)
 {
 	const uint room_half = ROOM_SIZE / 2;
 	(void)font;
@@ -41,9 +41,9 @@ void static draw_room(t_room *room, sf::RenderWindow& window, sf::Font& font, t_
 	text.setPosition(window_pos(room->coord_x) + 5, window_pos(room->coord_y));
 	text.setCharacterSize(12);
 	if (room == map->start)
-		text.setString("start");
+		text.setString("start " + std::string(ft_itoa(map->ant_count - last_ant_id)));
 	else if (room == map->end)
-		text.setString("end");
+		text.setString("end " + std::string(ft_itoa(arrived_count)));
 	else
 		return;
 	window.draw(text);
@@ -65,32 +65,59 @@ static void draw_tubes(t_map *map, sf::RenderWindow& window)
 static t_map *create_map()
 {
 	t_map *map;
+	char *line;
 
-	map = construct_map();
-	map->start = construct_room("0", 1, 2);
-	map->end = construct_room("1", 9, 2);
-	array_append(map->rooms, construct_room("2", 5, 0));
-	array_append(map->rooms, map->start);
-	array_append(map->rooms, map->end);
-	array_append(map->rooms, construct_room("3", 5, 4));
-	link_rooms(get_room_by_name("0", map), get_room_by_name("2", map));
-	link_rooms(get_room_by_name("0", map), get_room_by_name("3", map));
-	link_rooms(get_room_by_name("2", map), get_room_by_name("1", map));
-	link_rooms(get_room_by_name("3", map), get_room_by_name("1", map));
-	link_rooms(get_room_by_name("2", map), get_room_by_name("3", map));
+	get_next_line(0, &line);
+	free(line);
+	map = read_map(true);
 	return (map);
 }
 
 struct Move
 {
-	Move(uint id, const std::string& name) : ant_id(id), room_name(name) {}
+	//Move(uint id, const std::string& name) : ant_id(id), room_name(name) {}
+	Move(char **split) : ant_id(ft_atoi(split[0] + 1)), room_name(split[1]) {}
 	uint ant_id;
 	std::string room_name;
 };
 
 static void create_moves(std::vector<std::vector<Move> >& moves)
 {
+	char *line;
+	char **split;
+	char **it;
 	std::vector<Move> moveList;
+	while (get_next_line(0, &line) > 0)
+	{
+		split = ft_strsplit(line, ' ');
+		if (split)
+		{
+			//std::cout << ft_ptrarraysize(split) << " move at this stage" << std::endl;
+			it = split;
+			while (*it)
+			{
+				char **osplit;
+
+				osplit = ft_strsplit(*it, '-');
+				if (osplit && (ft_ptrarraysize(osplit) == 2))
+				{
+					//std::cout << "Parsing move: \"" << *it << "\"" << std::endl;
+					moveList.push_back(Move(osplit));
+				}
+				//else
+					//std::cout << "Invalid move str: \"" << *it << "\"" << std::endl;
+				if (osplit)
+					ft_freeptrarray(osplit);
+				it++;
+			}
+			moves.push_back(moveList);
+			moveList.clear();
+		}
+		if (split)
+			ft_freeptrarray(split);
+		free(line);
+	}
+	/*std::vector<Move> moveList;
 	moveList.push_back(Move(1, "3"));
 	moveList.push_back(Move(2, "2"));
 	moves.push_back(moveList);
@@ -101,11 +128,12 @@ static void create_moves(std::vector<std::vector<Move> >& moves)
 	moves.push_back(moveList);
 	moveList.clear();
 	moveList.push_back(Move(3, "1"));
-	moves.push_back(moveList);
+	moves.push_back(moveList);*/
 }
 
-static void apply_move_list(std::vector<Move>& move_list, t_map *map, uint& last_ant_id)
+static uint apply_move_list(std::vector<Move>& move_list, t_map *map, uint& last_ant_id)
 {
+	uint arrived_offset = 0;
 	for (uint i = 0; i < move_list.size(); i++)
 	{
 		Move& move = move_list[i];
@@ -125,9 +153,12 @@ static void apply_move_list(std::vector<Move>& move_list, t_map *map, uint& last
 		t_room *room_b = get_room_by_name(move.room_name.c_str(), map);
 		if (room_b != map->end)
 			room_b->ant_id = move.ant_id;
+		else
+			arrived_offset++;
 		if (room_a != map->start)
 			room_a->ant_id = NO_ANT;
 	}
+	return (arrived_offset);
 }
 
 static void draw_move(Move& move, uint frame_index, t_map *map, sf::RenderWindow& window, uint last_ant_id, sf::Font& font)
@@ -178,6 +209,7 @@ int main(void)
 	uint move_index = 0;
 	uint frame_index = 0;
 	uint last_ant_id = 0;
+	uint arrived_count = 0;
 	t_map *map = create_map();
 	std::vector<std::vector<Move> > moves;
 	create_moves(moves);
@@ -199,20 +231,35 @@ int main(void)
         window.clear(sf::Color::Black);
         draw_tubes(map, window);
         for (uint i = 0; i < map->rooms->size; i++)
-        	draw_room((t_room*)array_get(map->rooms, i), window, font, map);
+        	draw_room((t_room*)array_get(map->rooms, i), window, font, map, arrived_count, last_ant_id);
         draw_move_list(moves[move_index], frame_index, map, window, last_ant_id, font);
         if (frame_index < FRAME_COUNT)
         	frame_index++;
         else
         {
-        	apply_move_list(moves[move_index], map, last_ant_id);
+        	arrived_count += apply_move_list(moves[move_index], map, last_ant_id);
         	move_index++;
         	frame_index = 0;
         	if (move_index >= moves.size())
         	{
+        		window.clear(sf::Color::Black);
+		        draw_tubes(map, window);
+		        for (uint i = 0; i < map->rooms->size; i++)
+		        	draw_room((t_room*)array_get(map->rooms, i), window, font, map, arrived_count, last_ant_id);
+		        window.display();
+        		sf::sleep(sf::milliseconds(2000));
+        		//
+        		arrived_count = 0;
         		last_ant_id = 0;
         		reset_map(map);
         		move_index = 0;
+        		//
+        		window.clear(sf::Color::Black);
+		        draw_tubes(map, window);
+		        for (uint i = 0; i < map->rooms->size; i++)
+		        	draw_room((t_room*)array_get(map->rooms, i), window, font, map, arrived_count, last_ant_id);
+		        window.display();
+        		sf::sleep(sf::milliseconds(2000));
         	}
         }
         window.display();

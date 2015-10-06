@@ -16,7 +16,7 @@ t_map*	construct_map()
 
 	newMap = malloc(sizeof(t_map));
 	newMap->rooms = array_create(5);
-	newMap->ant_count = 3;
+	newMap->ant_count = 16;
 	newMap->start = NULL;
 	newMap->end = NULL;
 	return (newMap);
@@ -168,7 +168,7 @@ bool handle_tube(const char* line, t_map* map)
 }
 
 // untested, debug stuff
-t_map*	read_map()
+t_map*	read_map(bool visualizer)
 {
 	t_map* map;
 	char* buf;
@@ -191,6 +191,8 @@ t_map*	read_map()
 			continue;
 		if (handle_tube(buf, map))
 			continue;
+		if (visualizer)
+			return (map);
 		ft_putstr("Unhandled line: ");
 		ft_putendl(buf);
 		error();

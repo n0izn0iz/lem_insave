@@ -48,7 +48,7 @@ int main()
 	t_array* combs;
 	t_array *best_comb;
 	
-	map = read_map();
+	map = read_map(false);
 	ft_putchar('\n');
 	paths = find_paths(map);
 	sort_paths(paths);

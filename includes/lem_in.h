@@ -40,7 +40,7 @@ void	link_rooms(t_room *a, t_room *b);
 
 // map.c
 t_map	*construct_map();
-t_map	*read_map();
+t_map	*read_map(bool visualizer);
 t_room*	get_room_by_name(const char* name, t_map* map);
 t_room*	get_room_by_ant_id(uint id, t_map* map);
 

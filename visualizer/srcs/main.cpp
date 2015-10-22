@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
+extern "C" {
 #include <lem_in.h>
 #include <libft.h>
+}
 #include <iostream>
 #include <vector>
 
@@ -14,7 +16,6 @@
 
 struct Move
 {
-	//Move(uint id, const std::string& name) : ant_id(id), room_name(name) {}
 	Move(char **split) : ant_id(ft_atoi(split[0] + 1)), room_name(split[1]) {}
 	uint ant_id;
 	std::string room_name;
@@ -101,10 +102,6 @@ static void draw_tubes(t_map *map, sf::RenderWindow& window, Scaler& scaler)
 static t_map *create_map()
 {
 	t_map *map;
-	char *line;
-
-	get_next_line(0, &line);
-	free(line);
 	map = read_map(true);
 	return (map);
 }
@@ -120,7 +117,6 @@ static void create_moves(std::vector<std::vector<Move> >& moves)
 		split = ft_strsplit(line, ' ');
 		if (split)
 		{
-			//std::cout << ft_ptrarraysize(split) << " move at this stage" << std::endl;
 			it = split;
 			while (*it)
 			{
@@ -128,12 +124,7 @@ static void create_moves(std::vector<std::vector<Move> >& moves)
 
 				osplit = ft_strsplit(*it, '-');
 				if (osplit && (ft_ptrarraysize(osplit) == 2))
-				{
-					//std::cout << "Parsing move: \"" << *it << "\"" << std::endl;
 					moveList.push_back(Move(osplit));
-				}
-				//else
-					//std::cout << "Invalid move str: \"" << *it << "\"" << std::endl;
 				if (osplit)
 					ft_freeptrarray(osplit);
 				it++;
@@ -145,18 +136,6 @@ static void create_moves(std::vector<std::vector<Move> >& moves)
 			ft_freeptrarray(split);
 		free(line);
 	}
-	/*std::vector<Move> moveList;
-	moveList.push_back(Move(1, "3"));
-	moveList.push_back(Move(2, "2"));
-	moves.push_back(moveList);
-	moveList.clear();
-	moveList.push_back(Move(1, "1"));
-	moveList.push_back(Move(2, "1"));
-	moveList.push_back(Move(3, "3"));
-	moves.push_back(moveList);
-	moveList.clear();
-	moveList.push_back(Move(3, "1"));
-	moves.push_back(moveList);*/
 }
 
 static uint apply_move_list(std::vector<Move>& move_list, t_map *map, uint& last_ant_id)
@@ -165,17 +144,14 @@ static uint apply_move_list(std::vector<Move>& move_list, t_map *map, uint& last
 	for (uint i = 0; i < move_list.size(); i++)
 	{
 		Move& move = move_list[i];
-		//std::cout << "Applying move: ant#" << move.ant_id << " to room \"" << move.room_name << "\"" << std::endl;
 		t_room *room_a;
 		if (move.ant_id > last_ant_id)
 		{
 			room_a = map->start;
 			last_ant_id++;
-			//std::cout << "Spawning ant#" << ++last_ant_id << std::endl;
 		}
 		else
 		{
-			//std::cout << "Trying to find room of ant#" << move.ant_id << std::endl;
 			room_a = get_room_by_ant_id(move.ant_id, map);
 		}
 		t_room *room_b = get_room_by_name(move.room_name.c_str(), map);
@@ -234,6 +210,7 @@ static void reset_map(t_map *map)
 
 int main(void)
 {
+
 	uint move_index = 0;
 	uint frame_index = 0;
 	uint last_ant_id = 0;

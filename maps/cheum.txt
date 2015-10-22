@@ -1,0 +1,23 @@
+#ants
+5
+##start
+start 7 1
+4 3 3
+1 5 3
+2 9 3
+5 11 3
+3 7 5
+8 9 0
+##end
+end 7 7
+6 7 9
+#pipes
+start-1
+start-2
+1-4
+2-5
+1-3
+2-3
+3-end
+end-6
+

@@ -39,7 +39,7 @@ void recur_paths(t_map* map, t_array* paths, t_room* curr_room, t_array* curr_pa
 	t_array* path_to_use;
 	t_room* other_room;
 
-	if (level > 50)
+	if (level > 5000)
 	{
 		ft_putendl("Level overflow");
 		exit(-1);
@@ -84,6 +84,11 @@ t_array* find_paths(t_map* map)
 	paths = array_create(5);
 	curr_path = array_create(5);
 	recur_paths(map, paths, map->start, curr_path, 0);
+	if (paths->size == 0)
+	{
+		ft_putendl_fd("ERROR", 2);
+		exit(1);
+	}
 	return (paths);
 }
 

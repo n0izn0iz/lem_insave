@@ -26,11 +26,7 @@ t_map*	construct_map()
 bool handle_comment(const char* line)
 {
 	if (line[0] == '#' && line[1] !=  '#')
-	{
-		/*ft_putstr("Comment: ");
-		ft_putendl(line + 1);*/
 		return (true);
-	}
 	return (false);
 }
 
@@ -70,7 +66,6 @@ static uint splitsize(char** split)
 // debug
 static void printroom(t_room* room)
 {
-	//ft_putstr("Room: \"");
 	ft_putstr(room->name);
 	ft_putstr(" ");
 	ft_putnbr(room->coord_x);
@@ -79,7 +74,7 @@ static void printroom(t_room* room)
 	ft_putendl("");
 }
 
-// untested, debug stuff, memleak
+// untested, debug stuff
 bool handle_room(const char* line, uint command, t_map* map)
 {
 	char	**split;
@@ -88,7 +83,7 @@ bool handle_room(const char* line, uint command, t_map* map)
 	uint	coord_y;
 
 	split = ft_strsplit(line, ' ');
-	if (splitsize(split) < 3)
+	if (splitsize(split) != 3)
 	{
 		if (command != false)
 			error();
@@ -97,7 +92,10 @@ bool handle_room(const char* line, uint command, t_map* map)
 	name = split[0];
 	coord_x = ft_atoi(split[1]);
 	coord_y = ft_atoi(split[2]);
+	if (get_room_by_name(name, map) != NULL)
+		error();
 	t_room* room = construct_room(name, coord_x, coord_y);
+	ft_freeptrarray(split);
 	array_append(map->rooms, room);
 	if (command == START_COMMAND)
 		map->start = room;
@@ -120,8 +118,7 @@ t_room*	get_room_by_name(const char* name, t_map* map)
 			return (room);
 		i++;
 	}
-	error();
-	return ((t_room*)UNDEFINED);
+	return (NULL);
 }
 
 t_room*	get_room_by_ant_id(uint id, t_map* map)
@@ -148,10 +145,12 @@ static void link_rooms_by_name(const char* a_name, const char* b_name, t_map* ma
 
 	room_a = get_room_by_name(a_name, map);
 	room_b = get_room_by_name(b_name, map);
+	if (!room_a || !room_b)
+		error();
 	link_rooms(room_a, room_b);
 }
 
-// untested, debug stuff, memleak
+// untested, debug stuff
 bool handle_tube(const char* line, t_map* map)
 {
 	char	**split;
@@ -164,6 +163,23 @@ bool handle_tube(const char* line, t_map* map)
 	ft_putstr(split[0]);
 	ft_putstr("-");
 	ft_putendl(split[1]);
+	ft_freeptrarray(split);
+	return (true);
+}
+
+bool handle_antcount(t_map* map)
+{
+	char* line;
+	int ret;
+
+	while ((ret = get_next_line(0, &line)) > 0 && handle_comment(line))
+		free(line);
+	if (ret <= 0)
+		error();
+	map->ant_count = ft_atoi(line);
+	free(line);
+	if (map->ant_count == 0)
+		return (false);
 	return (true);
 }
 
@@ -173,8 +189,12 @@ t_map*	read_map(bool visualizer)
 	t_map* map;
 	char* buf;
 	uint command;
+	bool notubes;
 
+	notubes = true;
 	map = construct_map();
+	if (!handle_antcount(map))
+		error();
 	ft_putnbr(map->ant_count);
 	ft_putchar('\n');
 	command = 0;
@@ -190,12 +210,15 @@ t_map*	read_map(bool visualizer)
 		if ((command = handle_command(buf)))
 			continue;
 		if (handle_tube(buf, map))
+		{
+			notubes = false;
 			continue;
+		}
 		if (visualizer)
 			return (map);
-		ft_putstr("Unhandled line: ");
-		ft_putendl(buf);
 		error();
 	}
+	if (map->start == NULL || map->end == NULL || notubes)
+		error();
 	return (map);
 }

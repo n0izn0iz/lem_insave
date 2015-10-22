@@ -39,13 +39,11 @@ static void try_move_ant(t_room *a, t_room *b, t_map *map, uint *ants_at_start, 
 			return;
 		b->ant_id = push_ant(ants_at_start, map);
 		print_move(b, b->ant_id);
-		//printf("Moved ant#%d from start to \"%s\", remaining %d, arrived %d, in transit %d\n", b->ant_id, b->name, *ants_at_start, *ants_at_end, transit_count(*ants_at_start, *ants_at_end, map->ant_count));
 	}
 	else if (b == map->end)
 	{	
 		pop_ant(ants_at_end);
 		print_move(b, a->ant_id);
-		//printf("Moved ant#%d from \"%s\" to end, remaining %d, arrived %d, in transit %d\n", a->ant_id, a->name, *ants_at_start, *ants_at_end, transit_count(*ants_at_start, *ants_at_end, map->ant_count));
 		a->ant_id = NO_ANT;
 	}
 	else
@@ -53,7 +51,6 @@ static void try_move_ant(t_room *a, t_room *b, t_map *map, uint *ants_at_start, 
 		b->ant_id = a->ant_id;
 		a->ant_id = NO_ANT;
 		print_move(b, b->ant_id);
-		//printf("Moved ant#%d from \"%s\" to \"%s\", remaining %d, arrived %d, in transit %d\n", b->ant_id, a->name, b->name, *ants_at_start, *ants_at_end, transit_count(*ants_at_start, *ants_at_end, map->ant_count));
 	}
 }
 
@@ -72,7 +69,6 @@ void move_ants(t_map *map, t_array *comb)
 	ants_at_start = map->ant_count;
 	while (ants_at_end < map->ant_count)
 	{
-		//ft_putendl("MOVE:");
 		i = 0;
 		while (i < comb->size)
 		{

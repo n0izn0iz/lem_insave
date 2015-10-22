@@ -54,7 +54,7 @@ timer_create.lo: timer_create.c libcompat.h ../config.h \
   /usr/include/sys/_types/_sigaltstack.h \
   /usr/include/sys/_types/_ucontext.h \
   /usr/include/sys/_types/_sigset_t.h /usr/include/sys/resource.h \
-  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.1.0/include/stdint.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.0.0/include/stdint.h \
   /usr/include/stdint.h /usr/include/_types/_uint8_t.h \
   /usr/include/_types/_uint16_t.h /usr/include/_types/_uint32_t.h \
   /usr/include/_types/_uint64_t.h /usr/include/_types/_intmax_t.h \
@@ -69,7 +69,7 @@ timer_create.lo: timer_create.c libcompat.h ../config.h \
   /usr/include/pthread.h /usr/include/pthread/pthread_impl.h \
   /usr/include/pthread/sched.h /usr/include/pthread/qos.h \
   /usr/include/sys/qos.h /usr/include/sys/_types/_mach_port_t.h \
-  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.1.0/include/stdarg.h
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.0.0/include/stdarg.h
 
 libcompat.h:
 
@@ -247,7 +247,7 @@ libcompat.h:
 
 /usr/include/sys/resource.h:
 
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.1.0/include/stdint.h:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.0.0/include/stdint.h:
 
 /usr/include/stdint.h:
 
@@ -307,4 +307,4 @@ libcompat.h:
 
 /usr/include/sys/_types/_mach_port_t.h:
 
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.1.0/include/stdarg.h:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.0.0/include/stdarg.h:

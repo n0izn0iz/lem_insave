@@ -64,13 +64,3 @@ void			array_destroy(t_array *array)
 		free(array);
 	}
 }
-
-t_array*		array_dup(t_array* array)
-{
-	t_array* dup;
-
-	dup = array_create(array->cap);
-	dup->size = array->size;
-	ft_memcpy(dup->data, array->data, sizeof(void*) * array->size);
-	return (dup);
-}

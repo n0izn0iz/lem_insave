@@ -28,6 +28,6 @@ void		*ft_realloc(void *ptr, size_t basesize, size_t newsize)
 		newdata[i] = olddata[i];
 		i++;
 	}
-	free (olddata);
+	free(olddata);
 	return (newdata);
 }

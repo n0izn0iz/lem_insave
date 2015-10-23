@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   combs.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nmeier <nmeier@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2015/10/23 13:22:39 by nmeier            #+#    #+#             */
+/*   Updated: 2015/10/23 13:22:40 by nmeier           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lem_in.h"
 
-static bool path_conflict(t_array *a, t_array *b)
+static bool	path_conflict(t_array *a, t_array *b)
 {
-	uint i;
-	uint j;
-	t_room *iroom;
-	t_room *jroom;
+	uint	i;
+	uint	j;
+	t_room	*iroom;
+	t_room	*jroom;
 
 	i = 1;
 	while (i < a->size - 1)
@@ -24,90 +36,47 @@ static bool path_conflict(t_array *a, t_array *b)
 	return (false);
 }
 
-t_array	*find_path_combs(t_array *paths)
+static bool	find_conflicts(t_array *icomb, t_array *jpath)
 {
-	t_array *combs;
-	t_array *ipath;
-	t_array *jpath;
-	t_array *kpath;
-	t_array *icomb;
-	uint i;
-	uint j;
-	uint k;
-	uint n;
-	bool conflict;
+	t_array	*kpath;
+	uint	k;
 
-	n = paths->size;
+	k = 0;
+	while (k < icomb->size)
+	{
+		kpath = array_get(icomb, k);
+		if (path_conflict(jpath, kpath))
+			return (true);
+		k++;
+	}
+	return (false);
+}
+
+t_array		*find_path_combs(t_array *paths)
+{
+	t_array		*combs;
+	t_array		*icomb;
+	uint		i;
+	long long	j;
+
 	combs = array_create(5);
 	i = 0;
-	while (i < n)
+	while (i < paths->size)
 	{
-		ipath = array_get(paths, i);
 		icomb = array_create(5);
-		array_append(icomb, ipath);
-		j = 0;
-		while (j < n)
+		array_append(icomb, array_get(paths, i));
+		j = -1;
+		while (++j < paths->size)
 		{
 			if (i == j)
-			{
-				j++;
 				continue;
-			}
-			jpath = array_get(paths, j);
-			conflict = false;
-			k = 0;
-			while (k < icomb->size)
-			{
-				kpath = array_get(icomb, k);
-				if (path_conflict(jpath, kpath))
-				{
-					conflict = true;
-					break;
-				}
-				k++;
-			}
-			if (!conflict)
-				array_append(icomb, jpath);
-			j++;
+			if (!find_conflicts(icomb, array_get(paths, j)))
+				array_append(icomb, array_get(paths, j));
 		}
 		sort_paths(icomb);
 		if (icomb->size > 0)
 			array_append(combs, icomb);
 		i++;
 	}
-	return (combs);	
-}
-
-static uint get_distance(t_array *comb)
-{
-	t_array *path;
-	uint i;
-	uint distance;
-
-	i = 0;
-	distance = 0;
-	while (i < comb->size)
-	{
-		path = array_get(comb, i);
-		distance += path->size;
-		i++;
-	}
-	return (distance);
-}
-
-static int sort_func(void* a, void* b)
-{
-	t_array *acomb;
-	t_array *bcomb;
-
-	acomb = a;
-	bcomb = b;
-	if (acomb->size == bcomb->size)
-		return (get_distance(a) < get_distance(b) ? true : false);
-	return (acomb->size > bcomb->size ? true : false);
-}
-
-void	sort_combs(t_array *combs)
-{
-	array_sort(combs, sort_func);
+	return (combs);
 }

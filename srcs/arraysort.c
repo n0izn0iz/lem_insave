@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   arraysort.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nmeier <nmeier@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2015/10/22 17:58:52 by nmeier            #+#    #+#             */
+/*   Updated: 2015/10/22 17:58:53 by nmeier           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "array.h"
 
-void			array_sort(t_array* array, int (*func)(void*, void*))
+void			array_sort(t_array *array, int (*func)(void*, void*))
 {
 	unsigned int j;
 	unsigned int i;
@@ -9,7 +21,7 @@ void			array_sort(t_array* array, int (*func)(void*, void*))
 
 	n = array->size;
 	if (n < 2)
-		return;
+		return ;
 	j = 0;
 	while (j < n - 1)
 	{
@@ -25,4 +37,14 @@ void			array_sort(t_array* array, int (*func)(void*, void*))
 			array_swap(array, imin, j);
 		j++;
 	}
+}
+
+t_array			*array_dup(t_array *array)
+{
+	t_array *dup;
+
+	dup = array_create(array->cap);
+	dup->size = array->size;
+	ft_memcpy(dup->data, array->data, sizeof(void*) * array->size);
+	return (dup);
 }

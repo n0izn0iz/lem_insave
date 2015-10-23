@@ -4,36 +4,34 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-static void error()
+static void	error(void)
 {
 	ft_putstr_fd("ERROR\n", 2);
 	exit(-1);
 }
 
-t_map*	construct_map()
+t_map		*construct_map(void)
 {
-	t_map* newMap;
+	t_map *new_map;
 
-	newMap = malloc(sizeof(t_map));
-	newMap->rooms = array_create(5);
-	newMap->ant_count = 16;
-	newMap->start = NULL;
-	newMap->end = NULL;
-	return (newMap);
+	new_map = malloc(sizeof(t_map));
+	new_map->rooms = array_create(5);
+	new_map->ant_count = 16;
+	new_map->start = NULL;
+	new_map->end = NULL;
+	return (new_map);
 }
 
-// untested, debug stuff
-bool handle_comment(const char* line)
+bool		handle_comment(const char *line)
 {
-	if (line[0] == '#' && line[1] !=  '#')
+	if (line[0] == '#' && line[1] != '#')
 		return (true);
 	return (false);
 }
 
-// untested, debug stuff
-uint handle_command(const char* line)
+uint		handle_command(const char *line)
 {
-	if (line[0] != '#' || line[1] !=  '#')
+	if (line[0] != '#' || line[1] != '#')
 		return (false);
 	if (ft_strcmp("start", line + 2) == 0)
 	{
@@ -49,8 +47,7 @@ uint handle_command(const char* line)
 	return (UNDEFINED);
 }
 
-// untested
-static uint splitsize(char** split)
+static uint	splitsize(char **split)
 {
 	uint size;
 
@@ -63,8 +60,7 @@ static uint splitsize(char** split)
 	return (size);
 }
 
-// debug
-static void printroom(t_room* room)
+static void	printroom(t_room *room)
 {
 	ft_putstr(room->name);
 	ft_putstr(" ");
@@ -74,13 +70,13 @@ static void printroom(t_room* room)
 	ft_putendl("");
 }
 
-// untested, debug stuff
-bool handle_room(const char* line, uint command, t_map* map)
+bool		handle_room(const char *line, uint command, t_map *map)
 {
 	char	**split;
 	char	*name;
 	uint	coord_x;
 	uint	coord_y;
+	t_room	*room;
 
 	split = ft_strsplit(line, ' ');
 	if (splitsize(split) != 3)
@@ -94,7 +90,7 @@ bool handle_room(const char* line, uint command, t_map* map)
 	coord_y = ft_atoi(split[2]);
 	if (get_room_by_name(name, map) != NULL)
 		error();
-	t_room* room = construct_room(name, coord_x, coord_y);
+	room = construct_room(name, coord_x, coord_y);
 	ft_freeptrarray(split);
 	array_append(map->rooms, room);
 	if (command == START_COMMAND)
@@ -105,15 +101,15 @@ bool handle_room(const char* line, uint command, t_map* map)
 	return (true);
 }
 
-// untested
-t_room*	get_room_by_name(const char* name, t_map* map)
+t_room		*get_room_by_name(const char *name, t_map *map)
 {
-	uint i;
+	uint	i;
+	t_room	*room;
 
 	i = 0;
 	while (i < map->rooms->size)
 	{
-		t_room* room = array_get(map->rooms, i);
+		room = array_get(map->rooms, i);
 		if (ft_strcmp(room->name, name) == 0)
 			return (room);
 		i++;
@@ -121,14 +117,15 @@ t_room*	get_room_by_name(const char* name, t_map* map)
 	return (NULL);
 }
 
-t_room*	get_room_by_ant_id(uint id, t_map* map)
+t_room		*get_room_by_ant_id(uint id, t_map *map)
 {
-	uint i;
+	uint	i;
+	t_room	*room;
 
 	i = 0;
 	while (i < map->rooms->size)
 	{
-		t_room* room = array_get(map->rooms, i);
+		room = array_get(map->rooms, i);
 		if (room->ant_id == id)
 			return (room);
 		i++;
@@ -137,21 +134,19 @@ t_room*	get_room_by_ant_id(uint id, t_map* map)
 	return ((t_room*)UNDEFINED);
 }
 
-// untested
-static void link_rooms_by_name(const char* a_name, const char* b_name, t_map* map)
+static void	link_rooms_by_name(const char *aname, const char *bname, t_map *m)
 {
-	t_room* room_a;
-	t_room* room_b;
+	t_room *room_a;
+	t_room *room_b;
 
-	room_a = get_room_by_name(a_name, map);
-	room_b = get_room_by_name(b_name, map);
+	room_a = get_room_by_name(aname, m);
+	room_b = get_room_by_name(bname, m);
 	if (!room_a || !room_b)
 		error();
 	link_rooms(room_a, room_b);
 }
 
-// untested, debug stuff
-bool handle_tube(const char* line, t_map* map)
+bool		handle_tube(const char *line, t_map *map)
 {
 	char	**split;
 
@@ -159,7 +154,6 @@ bool handle_tube(const char* line, t_map* map)
 	if (splitsize(split) != 2)
 		return (false);
 	link_rooms_by_name(split[0], split[1], map);
-	//ft_putstr("Tube: ");
 	ft_putstr(split[0]);
 	ft_putstr("-");
 	ft_putendl(split[1]);
@@ -167,10 +161,10 @@ bool handle_tube(const char* line, t_map* map)
 	return (true);
 }
 
-bool handle_antcount(t_map* map)
+bool		handle_antcount(t_map *map)
 {
-	char* line;
-	int ret;
+	char	*line;
+	int		ret;
 
 	while ((ret = get_next_line(0, &line)) > 0 && handle_comment(line))
 		free(line);
@@ -183,13 +177,12 @@ bool handle_antcount(t_map* map)
 	return (true);
 }
 
-// untested, debug stuff
-t_map*	read_map(bool visualizer)
+t_map		*read_map(bool visualizer)
 {
-	t_map* map;
-	char* buf;
-	uint command;
-	bool notubes;
+	t_map	*map;
+	char	*buf;
+	uint	command;
+	bool	notubes;
 
 	notubes = true;
 	map = construct_map();

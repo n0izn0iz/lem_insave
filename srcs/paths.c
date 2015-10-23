@@ -2,7 +2,7 @@
 #include <libft.h>
 #include <stdlib.h>
 
-bool find_room_in_path(t_room *room, t_array *path)
+bool	find_room_in_path(t_room *room, t_array *path)
 {
 	uint i;
 
@@ -16,14 +16,15 @@ bool find_room_in_path(t_room *room, t_array *path)
 	return (false);
 }
 
-void print_path(t_array* path)
+void	print_path(t_array *path)
 {
-	uint i;
+	uint	i;
+	t_room	*room;
 
 	i = 0;
 	while (i < path->size)
 	{
-		t_room* room = array_get(path, i);
+		room = array_get(path, i);
 		if (i != 0)
 			ft_putstr("->");
 		ft_putstr(room->name);
@@ -33,38 +34,25 @@ void print_path(t_array* path)
 	ft_putnbr(path->size);
 }
 
-void recur_paths(t_map* map, t_array* paths, t_room* curr_room, t_array* curr_path, int level)
+void	recur_paths(t_map *map, t_array *paths, t_room *curr_room, t_array *curr_path, int level)
 {
-	uint i;
-	t_array* path_to_use;
-	t_room* other_room;
+	uint	i;
+	t_array	*path_to_use;
+	t_room	*other_room;
 
 	if (level > 5000)
 	{
-		ft_putendl("Level overflow");
+		ft_putendl("ERROR");
 		exit(-1);
 	}
-
 	if (find_room_in_path(curr_room, curr_path))
 		return;
-
 	array_append(curr_path, curr_room);
-
-	/*ft_putstr("Level: ");
-	ft_putnbr(level);
-	ft_putstr(", CurrPath: ");
-	print_path(curr_path);
-	ft_putchar('\n');*/
-
 	if (curr_room == map->end)
 	{
-		/*ft_putstr("Found path: ");
-		print_path(curr_path);
-		ft_putchar('\n');*/
 		array_append(paths, curr_path);
 		return ;
 	}
-
 	i = 0;
 	while (i < curr_room->tubes->size)
 	{
@@ -75,12 +63,11 @@ void recur_paths(t_map* map, t_array* paths, t_room* curr_room, t_array* curr_pa
 	}
 }
 
-t_array* find_paths(t_map* map)
+t_array	*find_paths(t_map* map)
 {
-	t_array* paths;
-	t_array* curr_path;
+	t_array *paths;
+	t_array *curr_path;
 
-	//ft_putendl("PATHFINDING:");
 	paths = array_create(5);
 	curr_path = array_create(5);
 	recur_paths(map, paths, map->start, curr_path, 0);
@@ -94,7 +81,7 @@ t_array* find_paths(t_map* map)
 
 #include <stdio.h>
 
-static int comp_func(void* a, void* b)
+static int	comp_func(void* a, void* b)
 {
 	t_array* c = a;
 	t_array* d = b;
@@ -103,7 +90,7 @@ static int comp_func(void* a, void* b)
 	return (false);
 }
 
-void	sort_paths(t_array* paths)
+void		sort_paths(t_array* paths)
 {
 	array_sort(paths, comp_func);
 }
